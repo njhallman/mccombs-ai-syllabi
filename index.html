@@ -46,6 +46,7 @@ section{display:flex;flex-direction:column;gap:12px}
 .tag.old{background:transparent;border:1px solid var(--line);color:var(--muted)}
 .open{font:600 14px var(--body);color:var(--accent);text-decoration:none;white-space:nowrap;padding-top:2px}
 .open:hover{text-decoration:underline}
+.open.alt{color:var(--muted);font-weight:500}
 .missing{color:var(--muted);font-size:14px;white-space:nowrap;padding-top:2px}
 .fine{color:var(--muted);font-size:14px}
 .fine a{color:var(--accent)}
@@ -76,7 +77,7 @@ section{display:flex;flex-direction:column;gap:12px}
 
   <section>
     <h2>In the catalog, no public syllabus found yet</h2>
-    <p class="fine">Graduate courses are not required to post syllabi publicly. These appear in the 2026–27 catalog; the search for public copies continues.</p>
+    <p class="fine">Graduate courses are not required to post syllabi publicly. These appear in the 2026–27 catalog; the search for public copies continues. Until then, each links to the official course description.</p>
     <ul class="list" id="missing"></ul>
   </section>
 
@@ -85,6 +86,8 @@ section{display:flex;flex-direction:column;gap:12px}
 
 <script>
 const DL = id => "https://utdirect.utexas.edu/apps/student/coursedocs/courses/nlogon/download/" + id + "/";
+const BTAI = "https://www.mccombs.utexas.edu/graduate/specialized-masters/ms-business-technology-and-artificial-intelligence/academics/curriculum/";
+const CAT = "https://catalog.utexas.edu/general-information/coursesatoz/";
 const UPDATED = "Nov 18, 2026";
 // level: "ug" | "grad" | "both"; current: true when the syllabus is from AY 2026-27
 const CORE = [
@@ -106,21 +109,21 @@ const RELATED = [
   {code:"MIS 285N", title:"Cognitive Computing", who:"Alex Dimakis, Constantine Caramanis", term:"Spring 2022", level:"grad", current:false, url:DL(11823385)}
 ];
 const MISSING = [
-  {code:"MIS 385N.22", title:"Generative Artificial Intelligence I", level:"grad"},
-  {code:"MIS 385N.23", title:"Generative Artificial Intelligence II", level:"grad"},
-  {code:"MIS 385N.18", title:"Problem Solving with Unstructured Data and Generative AI", level:"grad"},
-  {code:"MIS 381N.31", title:"Artificial Intelligence and Machine Learning for Managers", level:"grad"},
-  {code:"MIS 385G", title:"Machine Learning and Artificial Intelligence for Executives", level:"grad"},
-  {code:"MIS 385N.21", title:"Artificial Intelligence in the Enterprise", level:"grad"},
-  {code:"MIS 385N.16", title:"Math Foundations of Artificial Intelligence", level:"grad"},
-  {code:"MIS 382N.16", title:"Fundamentals of Neural Networks and Machine Learning", level:"grad"},
-  {code:"MIS 385N.20", title:"Risk Governance: AI and Intelligent Automation", level:"grad"},
-  {code:"MIS 381N.32", title:"AI Strategies for Digital Transformation", level:"grad"},
-  {code:"MIS 381N.33", title:"Artificial Intelligence in Business and Society", level:"grad"},
-  {code:"MIS 381N.34", title:"Artificial Intelligence in Healthcare", level:"grad"},
-  {code:"MKT 382.46", title:"Artificial Intelligence for Business Leaders", level:"grad"},
-  {code:"FIN 385F", title:"Analytic Finance and Machine Learning", level:"grad"},
-  {code:"MKT 378.4", title:"Sales Technology and Artificial Intelligence", level:"ug"}
+  {code:"MIS 385N.22", title:"Generative Artificial Intelligence I", desc:BTAI, descLabel:"Program description", level:"grad"},
+  {code:"MIS 385N.23", title:"Generative Artificial Intelligence II", desc:BTAI, descLabel:"Program description", level:"grad"},
+  {code:"MIS 385N.18", title:"Problem Solving with Unstructured Data and Generative AI", desc:BTAI, descLabel:"Program description", level:"grad"},
+  {code:"MIS 381N.31", title:"Artificial Intelligence and Machine Learning for Managers", desc:CAT+"mis/", descLabel:"Catalog entry", level:"grad"},
+  {code:"MIS 385G", title:"Machine Learning and Artificial Intelligence for Executives", desc:CAT+"mis/", descLabel:"Catalog entry", level:"grad"},
+  {code:"MIS 385N.21", title:"Artificial Intelligence in the Enterprise", desc:BTAI, descLabel:"Program description", level:"grad"},
+  {code:"MIS 385N.16", title:"Math Foundations of Artificial Intelligence", desc:BTAI, descLabel:"Program description", level:"grad"},
+  {code:"MIS 382N.16", title:"Fundamentals of Neural Networks and Machine Learning", desc:BTAI, descLabel:"Program description", level:"grad"},
+  {code:"MIS 385N.20", title:"Risk Governance: AI and Intelligent Automation", desc:BTAI, descLabel:"Program description", level:"grad"},
+  {code:"MIS 381N.32", title:"AI Strategies for Digital Transformation", desc:CAT+"mis/", descLabel:"Catalog entry", level:"grad"},
+  {code:"MIS 381N.33", title:"Artificial Intelligence in Business and Society", desc:CAT+"mis/", descLabel:"Catalog entry", level:"grad"},
+  {code:"MIS 381N.34", title:"Artificial Intelligence in Healthcare", desc:CAT+"mis/", descLabel:"Catalog entry", level:"grad"},
+  {code:"MKT 382.46", title:"Artificial Intelligence for Business Leaders", desc:CAT+"mkt/", descLabel:"Catalog entry", level:"grad"},
+  {code:"FIN 385F", title:"Analytic Finance and Machine Learning", desc:CAT+"fin/", descLabel:"Catalog entry", level:"grad"},
+  {code:"MKT 378.4", title:"Sales Technology and Artificial Intelligence", desc:CAT+"mkt/", descLabel:"Catalog entry", level:"ug"}
 ];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function row(c){
@@ -129,7 +132,7 @@ function row(c){
     + (c.url && !c.current ? `<span class="tag old">Earlier term</span>` : "");
   const meta = c.who ? `<div class="meta">${esc(c.who)} · ${esc(c.term)}</div>` : "";
   const note = c.note ? `<div class="note">${esc(c.note)}</div>` : "";
-  const link = c.url ? `<a class="open" href="${esc(c.url)}" target="_blank" rel="noopener">Open syllabus →</a>` : `<span class="missing">Not posted</span>`;
+  const link = c.url ? `<a class="open" href="${esc(c.url)}" target="_blank" rel="noopener">Open syllabus →</a>` : (c.desc ? `<a class="open alt" href="${esc(c.desc)}" target="_blank" rel="noopener">${esc(c.descLabel)} →</a>` : `<span class="missing">Not posted</span>`);
   return `<li class="row" data-level="${lv.join(" ")}"><div class="code">${esc(c.code)}</div><div><div class="title">${esc(c.title)}</div>${meta}${note}<div class="tags">${tags}</div></div>${link}</li>`;
 }
 document.getElementById("updated").textContent = UPDATED;
