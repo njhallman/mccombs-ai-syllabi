@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>McCombs AI Syllabi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column; a course register where each row is code | title + meta | syllabus link. */
+:root{
+  --bg:#f7f8fa; --surface:#ffffff; --fg:#161b26; --muted:#5b6475; --line:#dde1e9;
+  --accent:#b4520a; --accent-soft:#fbeee2; --grad:#1d5fa8; --grad-soft:#e6eff9;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11141b; --surface:#191d27; --fg:#e8ebf2; --muted:#9aa3b5; --line:#2b3140;
+  --accent:#f0934a; --accent-soft:#3a2614; --grad:#7fb3ee; --grad-soft:#16283d; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#11141b; --surface:#191d27; --fg:#e8ebf2; --muted:#9aa3b5; --line:#2b3140;
+  --accent:#f0934a; --accent-soft:#3a2614; --grad:#7fb3ee; --grad-soft:#16283d; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 64px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+header{display:flex;flex-direction:column;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-family:var(--display);font-size:20px;margin:0;text-wrap:balance}
+p{margin:0;max-width:65ch}
+.lede{color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:500 14px var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.filters button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section{display:flex;flex-direction:column;gap:12px}
+.list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.row{display:grid;grid-template-columns:128px minmax(0,1fr) auto;gap:16px;align-items:start;padding:16px 18px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.code{font-family:var(--mono);font-size:13px;font-weight:500;padding-top:3px}
+.title{font-weight:600;font-size:16px;line-height:1.35}
+.meta{color:var(--muted);font-size:14px;margin-top:2px}
+.note{font-size:14px;margin-top:6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.tag.grad{background:var(--grad-soft);color:var(--grad)}
+.tag.old{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.open{font:600 14px var(--body);color:var(--accent);text-decoration:none;white-space:nowrap;padding-top:2px}
+.open:hover{text-decoration:underline}
+.missing{color:var(--muted);font-size:14px;white-space:nowrap;padding-top:2px}
+.fine{color:var(--muted);font-size:14px}
+.fine a{color:var(--accent)}
+@media (max-width:560px){ .row{grid-template-columns:minmax(0,1fr);gap:6px} .open,.missing{padding-top:4px} }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Unofficial compilation · updated <span id="updated"></span></div>
+    <h1>AI-related courses at Texas McCombs, with public syllabi</h1>
+    <p class="lede">Courses in the McCombs School of Business where AI is central, each linked to the syllabus the university posts publicly. Many are listed in the course schedule under generic titles such as “Topics in Management Information Systems”, so the title shown here is the one on the syllabus itself.</p>
+    <div class="filters" role="group" aria-label="Filter by level">
+      <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
+      <button type="button" id="f-ug" data-f="ug" aria-pressed="false">Undergraduate</button>
+      <button type="button" id="f-grad" data-f="grad" aria-pressed="false">Graduate</button>
+    </div>
+  </header>
+
+  <section>
+    <h2>AI-focused courses</h2>
+    <ul class="list" id="core"></ul>
+  </section>
+
+  <section>
+    <h2>Related: machine learning and analytics</h2>
+    <ul class="list" id="related"></ul>
+  </section>
+
+  <section>
+    <h2>In the catalog, no public syllabus found yet</h2>
+    <p class="fine">Graduate courses are not required to post syllabi publicly. These appear in the 2026–27 catalog; the search for public copies continues.</p>
+    <ul class="list" id="missing"></ul>
+  </section>
+
+  <p class="fine">Syllabus links open the university’s own public copies at <a href="https://utdirect.utexas.edu/apps/student/coursedocs/nlogon/">UT Austin’s syllabus and CV repository</a> or Simple Syllabus. Where no 2026–27 syllabus is posted, the most recent public term is linked and marked. Spring and Summer 2027 syllabi were not posted when this page was compiled. This page is not affiliated with the university.</p>
+</div>
+
+<script>
+const DL = id => "https://utdirect.utexas.edu/apps/student/coursedocs/courses/nlogon/download/" + id + "/";
+const UPDATED = "Nov 18, 2026";
+// level: "ug" | "grad" | "both"; current: true when the syllabus is from AY 2026-27
+const CORE = [
+  {code:"MKT 178", title:"Artificial Intelligence in Marketing", who:"Chad Meley", term:"Fall 2026", level:"ug", current:true, url:DL(17373123)},
+  {code:"MIS 372T", title:"Web Development with AI", who:"Muhammad Jawad", term:"Fall 2026", level:"ug", current:true, url:DL(17376592)},
+  {code:"MKT 382", title:"AI for Competitive Advantage", who:"Ben Bentzin", term:"Fall 2025", level:"grad", current:false, url:DL(16261209)},
+  {code:"FIN 372T / 397", title:"AI Powered Investments", who:"Travis Johnson", term:"Spring 2026", level:"both", current:false, url:DL(16996921), note:"Using modern AI tools as partners in the investment management process."},
+  {code:"MIS / BAX 372T", title:"Gen AI in Business and Social Science", who:"Yan Leng", term:"Fall 2025", level:"ug", current:false, url:DL(16272070)},
+  {code:"MIS 185N", title:"Data Governance and Responsible AI", who:"David Hendrawirawan", term:"Spring 2025", level:"grad", current:false, url:"https://utexas.simplesyllabus.com/doc/8txqm2fq9", note:"Joint syllabus for a three-course series on data and AI."},
+  {code:"MKT 382 / LAW 397S", title:"The Law of Social Media and Artificial Intelligence", who:"John Dzienkowski", term:"Spring 2026", level:"grad", current:false, url:DL(16992562)},
+  {code:"MKT 178", title:"Storytizing: Persuasive Selling in the AI Era", who:"Robert Pearson", term:"Fall 2026", level:"ug", current:true, url:DL(17373137)}
+];
+const RELATED = [
+  {code:"MIS 382N", title:"Advanced Machine Learning", who:"Joydeep Ghosh", term:"Fall 2024", level:"grad", current:false, url:DL(13853578)},
+  {code:"BAX / MIS 372T", title:"Advanced Analytics Programming", who:"Deepayan Chakrabarti", term:"Fall 2026", level:"ug", current:true, url:DL(17376557)},
+  {code:"BAX 357", title:"Predictive Analytics", who:"Mark Tsechansky", term:"Fall 2026", level:"ug", current:true, url:DL(17381922)},
+  {code:"MIS / MKT 372T", title:"Predictive Analytics and Data Mining", who:"Mark Tsechansky", term:"Fall 2026", level:"ug", current:true, url:DL(17373112)},
+  {code:"MIS 285N", title:"Cognitive Computing", who:"Alex Dimakis, Constantine Caramanis", term:"Spring 2022", level:"grad", current:false, url:DL(11823385)}
+];
+const MISSING = [
+  {code:"MIS 385N.22", title:"Generative Artificial Intelligence I", level:"grad"},
+  {code:"MIS 385N.23", title:"Generative Artificial Intelligence II", level:"grad"},
+  {code:"MIS 385N.18", title:"Problem Solving with Unstructured Data and Generative AI", level:"grad"},
+  {code:"MIS 381N.31", title:"Artificial Intelligence and Machine Learning for Managers", level:"grad"},
+  {code:"MIS 385G", title:"Machine Learning and Artificial Intelligence for Executives", level:"grad"},
+  {code:"MIS 385N.21", title:"Artificial Intelligence in the Enterprise", level:"grad"},
+  {code:"MIS 385N.16", title:"Math Foundations of Artificial Intelligence", level:"grad"},
+  {code:"MIS 382N.16", title:"Fundamentals of Neural Networks and Machine Learning", level:"grad"},
+  {code:"MIS 385N.20", title:"Risk Governance: AI and Intelligent Automation", level:"grad"},
+  {code:"MIS 381N.32", title:"AI Strategies for Digital Transformation", level:"grad"},
+  {code:"MIS 381N.33", title:"Artificial Intelligence in Business and Society", level:"grad"},
+  {code:"MIS 381N.34", title:"Artificial Intelligence in Healthcare", level:"grad"},
+  {code:"MKT 382.46", title:"Artificial Intelligence for Business Leaders", level:"grad"},
+  {code:"FIN 385F", title:"Analytic Finance and Machine Learning", level:"grad"},
+  {code:"MKT 378.4", title:"Sales Technology and Artificial Intelligence", level:"ug"}
+];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function row(c){
+  const lv = c.level === "both" ? ["ug","grad"] : [c.level];
+  const tags = lv.map(l => `<span class="tag ${l==="grad"?"grad":""}">${l==="grad"?"Graduate":"Undergraduate"}</span>`).join("")
+    + (c.url && !c.current ? `<span class="tag old">Earlier term</span>` : "");
+  const meta = c.who ? `<div class="meta">${esc(c.who)} · ${esc(c.term)}</div>` : "";
+  const note = c.note ? `<div class="note">${esc(c.note)}</div>` : "";
+  const link = c.url ? `<a class="open" href="${esc(c.url)}" target="_blank" rel="noopener">Open syllabus →</a>` : `<span class="missing">Not posted</span>`;
+  return `<li class="row" data-level="${lv.join(" ")}"><div class="code">${esc(c.code)}</div><div><div class="title">${esc(c.title)}</div>${meta}${note}<div class="tags">${tags}</div></div>${link}</li>`;
+}
+document.getElementById("updated").textContent = UPDATED;
+document.getElementById("core").innerHTML = CORE.map(row).join("");
+document.getElementById("related").innerHTML = RELATED.map(row).join("");
+document.getElementById("missing").innerHTML = MISSING.map(row).join("");
+document.querySelectorAll(".filters button").forEach(b => b.addEventListener("click", () => {
+  const f = b.dataset.f;
+  document.querySelectorAll(".filters button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  document.querySelectorAll(".row").forEach(r => { r.hidden = f !== "all" && !r.dataset.level.split(" ").includes(f); });
+}));
+</script>
