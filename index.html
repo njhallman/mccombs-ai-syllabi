@@ -81,7 +81,7 @@ section{display:flex;flex-direction:column;gap:12px}
     <ul class="list" id="missing"></ul>
   </section>
 
-  <p class="fine">Syllabus links open the university’s own public copies at <a href="https://utdirect.utexas.edu/apps/student/coursedocs/nlogon/">UT Austin’s syllabus and CV repository</a> or Simple Syllabus. Where no 2026–27 syllabus is posted, the most recent public term is linked and marked. Spring and Summer 2027 syllabi were not posted when this page was compiled. This page is not affiliated with the university.</p>
+  <p class="fine">Syllabus links open the university’s own public copies at <a href="https://utdirect.utexas.edu/apps/student/coursedocs/nlogon/">UT Austin’s syllabus and CV repository</a> or Simple Syllabus, and in a few marked cases an instructor’s own posting. Where no 2026–27 syllabus is posted, the most recent public term is linked and marked. Spring and Summer 2027 syllabi were not posted when this page was compiled. This page is not affiliated with the university.</p>
 </div>
 
 <script>
@@ -106,7 +106,9 @@ const RELATED = [
   {code:"BAX / MIS 372T", title:"Advanced Analytics Programming", who:"Deepayan Chakrabarti", term:"Fall 2026", level:"ug", current:true, url:DL(17376557)},
   {code:"BAX 357", title:"Predictive Analytics", who:"Mark Tsechansky", term:"Fall 2026", level:"ug", current:true, url:DL(17381922)},
   {code:"MIS / MKT 372T", title:"Predictive Analytics and Data Mining", who:"Mark Tsechansky", term:"Fall 2026", level:"ug", current:true, url:DL(17373112)},
-  {code:"MIS 285N", title:"Cognitive Computing", who:"Alex Dimakis, Constantine Caramanis", term:"Spring 2022", level:"grad", current:false, url:DL(11823385)}
+  {code:"MIS 285N", title:"Cognitive Computing", who:"Alex Dimakis, Constantine Caramanis", term:"Spring 2022", level:"grad", current:false, url:DL(11823385)},
+  {code:"MIS 385N", title:"Advanced Data Mining and Web Analytics", who:"Mingyuan Zhou", term:"Spring 2020", level:"grad", current:false, url:"https://mingyuanzhou.github.io/Papers/syllabus_MIS385_Spring2020_ZHOU.pdf", note:"Posted on the instructor's own site. Covers deep neural networks and deep generative models."},
+  {code:"MBA / Executive MBA", title:"Machine Learning and AI for MBA and executive students", who:"Maytal Saar-Tsechansky", term:"2021", level:"grad", current:false, url:"https://platform.simon.rochester.edu/sites/default/files/2023-01/MachineLearning-AI-MBA-ExecEd.pdf", linkLabel:"Open course overview", note:"Slides from a teaching workshop describing the course goals and topics. An overview, not a syllabus."}
 ];
 const MISSING = [
   {code:"MIS 385N.22", title:"Generative Artificial Intelligence I", desc:BTAI, descLabel:"Program description", level:"grad"},
@@ -132,7 +134,7 @@ function row(c){
     + (c.url && !c.current ? `<span class="tag old">Earlier term</span>` : "");
   const meta = c.who ? `<div class="meta">${esc(c.who)} · ${esc(c.term)}</div>` : "";
   const note = c.note ? `<div class="note">${esc(c.note)}</div>` : "";
-  const link = c.url ? `<a class="open" href="${esc(c.url)}" target="_blank" rel="noopener">Open syllabus →</a>` : (c.desc ? `<a class="open alt" href="${esc(c.desc)}" target="_blank" rel="noopener">${esc(c.descLabel)} →</a>` : `<span class="missing">Not posted</span>`);
+  const link = c.url ? `<a class="open" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.linkLabel||"Open syllabus")} →</a>` : (c.desc ? `<a class="open alt" href="${esc(c.desc)}" target="_blank" rel="noopener">${esc(c.descLabel)} →</a>` : `<span class="missing">Not posted</span>`);
   return `<li class="row" data-level="${lv.join(" ")}"><div class="code">${esc(c.code)}</div><div><div class="title">${esc(c.title)}</div>${meta}${note}<div class="tags">${tags}</div></div>${link}</li>`;
 }
 document.getElementById("updated").textContent = UPDATED;
